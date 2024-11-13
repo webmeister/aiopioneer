@@ -1003,11 +1003,12 @@ class PioneerAVR:
         """Call callbacks to signal updated zone(s)."""
         if not zones:
             zones = self.zones + [Zones.ALL]
-        for zone in zones:
-            if zone in self._zone_callback:
-                callback = self._zone_callback[zone]
-                if callback:
-                    callback()
+        active_callbacks = {
+            callback for zone, callback in self._zone_callback.items()
+            if zone in zones and callback
+        }
+        for callback in active_callbacks:
+            callback()
 
     # Update functions
     def _parse_response(self, response_raw: str) -> dict[str, Any]:
