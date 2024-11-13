@@ -1,9 +1,14 @@
 """aiopioneer response parsers for informational responses."""
 
+import time
+
+from aiopioneer.commands import PIONEER_COMMANDS
 from aiopioneer.const import (
     AUDIO_SIGNAL_INPUT_FREQ,
     AUDIO_SIGNAL_INPUT_INFO,
     AUDIO_WORKING_PQLS,
+    LINE_TYPES,
+    PLAYER_STATES,
     VIDEO_SIGNAL_INPUT_TERMINAL,
     VIDEO_SIGNAL_FORMATS,
     VIDEO_SIGNAL_3D_MODES,
@@ -769,4 +774,142 @@ class InformationParsers:
                 queue_commands=None,
             )
         )
+        return parsed
+
+    @staticmethod
+    def device_screen_name(
+        raw: str, _params: dict, zone=Zones.ALL, command="GCP"
+    ) -> list:
+        """Response parser for AVR screen name."""
+        parsed = []
+        parsed.append(
+            Response(
+                raw=raw,
+                response_command=command,
+                base_property="amp",
+                property_name="player_state",
+                zone=zone,
+                value=PLAYER_STATES.get(raw[:2]),
+                queue_commands=None,
+            )
+        )
+        parsed.append(
+            Response(
+                raw=raw,
+                response_command=command,
+                base_property="amp",
+                property_name="screen_toplevel",
+                zone=zone,
+                value=raw[3:4] == "0",
+                queue_commands=None,
+            )
+        )
+        parsed.append(
+            Response(
+                raw=raw,
+                response_command=command,
+                base_property="amp",
+                property_name="screen_name",
+                zone=zone,
+                value=raw[8:-1],
+                queue_commands=None,
+            )
+        )
+        return parsed
+
+    @staticmethod
+    def device_screen_indexes(
+        raw: str, _params: dict, zone=None, command="GDP"
+    ) -> list:
+        """Response parser for AVR screen number of lines."""
+        index_start = int(raw[:5])
+        index_end = int(raw[5:-5])
+        total = int(raw[-5:])
+
+        parsed = []
+        queue_commands = None
+
+        if index_start == 1:
+            # clear cached contents
+            parsed.append(
+                Response(
+                    raw=raw,
+                    response_command=command,
+                    base_property="amp",
+                    property_name="player_items",
+                    zone=zone,
+                    value={},
+                    queue_commands=None,
+                )
+            )
+
+        if index_end < total:
+            PIONEER_COMMANDS["get_next_page"] = {
+                Zones.Z1: [str(index_end + 1).rjust(5, '0') + "GGP", 'GBP'],
+            }
+            queue_commands = ["get_next_page"]
+
+        parsed.append(
+            Response(
+                raw=raw,
+                response_command=command,
+                base_property="amp",
+                property_name="screen_index",
+                zone=zone,
+                value=index_start,
+                queue_commands=queue_commands,
+            )
+        )
+        return parsed
+
+    @staticmethod
+    def device_screen_line(
+        raw: str, _params: dict, zone=Zones.ALL, command="GEP"
+    ) -> list:
+        """Response parser for AVR screen line."""
+        parsed = []
+        line_id = int(raw[:2])
+        line_type = LINE_TYPES.get(raw[3:5])
+        line_value = raw[6:-1]
+        if line_type in {"file", "folder"}:
+            def add_item(pioneer_avr):
+                pioneer_avr.amp["player_items"][line_value] = {
+                    "id": pioneer_avr.amp["screen_index"] + line_id - 1,
+                    "type": line_type,
+                }
+            parsed.append(
+                Response(
+                    raw=raw,
+                    response_command=command,
+                    base_property=add_item,
+                    property_name="player_items",
+                    zone=zone,
+                    value=line_value,
+                    queue_commands=None,
+                )
+            )
+        if line_type in {"title", "artist", "album", "position"}:
+            parsed.append(
+                Response(
+                    raw=raw,
+                    response_command=command,
+                    base_property="amp",
+                    property_name="player_" + line_type,
+                    zone=zone,
+                    value=line_value,
+                    queue_commands=None,
+                )
+            )
+        if line_type == "position":
+            parsed.append(
+                Response(
+                    raw=raw,
+                    response_command=command,
+                    base_property="amp",
+                    property_name="player_position_update",
+                    zone=zone,
+                    value=time.time(),
+                    queue_commands=None,
+                )
+            )
         return parsed

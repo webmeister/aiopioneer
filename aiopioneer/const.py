@@ -218,6 +218,7 @@ MEDIA_CONTROL_COMMANDS = {
         "stop": "operation_media_stop",
         "next": "operation_media_next",
         "previous": "operation_media_previous",
+        "favorite": "operation_media_favorite",
     },
 }
 
@@ -583,4 +584,25 @@ EXTERNAL_HDMI_TRIGGER_OPTIONS = {
     "2": "HDMIOUT2",
     "3": "HDMIOUT3",
     "4": "HDMIOUT4/HDBaseT",
+}
+
+PLAYER_STATES = {
+    "01": "idle",
+    "02": "playing",
+    "03": "paused",
+    "06": "idle",
+}
+
+LINE_TYPES = {
+    "00": "message",
+    "01": "folder",
+    "02": "file",
+    "20": "title",
+    "21": "artist",
+    "22": "album",
+    "23": "position",
+    "26": "format",
+    "27": "resolution",
+    "28": "sampling_rate",
+    "29": "bit_rate",
 }

@@ -627,11 +627,15 @@ class PioneerAVR:
             self._response_event.clear()
             for response in self._response_queue:
                 if response.startswith(response_prefix):
-                    if debug_command:
-                        _LOGGER.debug(
-                            "AVR command %s returned response: %s", command, response
-                        )
-                    return response
+                    if response_prefix == 'GBP':
+                        # multi-line response -> wait for final message
+                        response_prefix = 'GEP' + response[3:5]
+                    else:
+                        if debug_command:
+                            _LOGGER.debug(
+                                "AVR command %s returned response: %s", command, response
+                            )
+                        return response
                 if response.startswith("E"):
                     raise AVRCommandError(response)
             self._response_queue = []
@@ -2008,3 +2012,28 @@ class PioneerAVR:
         await self.send_command(
             "set_source_name", Zones.Z1, prefix=source_name, suffix=source_id
         )
+
+    async def select_menu_item(
+        self, path: str
+    ) -> None:
+        """Select item from menu via path."""
+        if not path:
+            return
+
+        if "screen_toplevel" not in self.amp or "player_items" not in self.amp:
+            await self.send_command("query_screen_content")
+            await self._command_queue_wait()
+
+        if path.startswith("/"):
+            path = path.lstrip("/")
+
+            if not self.amp.get("screen_toplevel"):
+                await self.send_command("operation_media_top_menu")
+                await self._command_queue_wait()
+
+        if path:
+            item, _, remaining = path.partition("/")
+            metadata = self.amp.get("player_items")[item]
+            await self.send_raw_request(str(metadata["id"]).rjust(5, "0") + "GHP", "GBP")
+            await self._command_queue_wait()
+            await self.select_menu_item(remaining.lstrip("/"))

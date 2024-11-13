@@ -209,6 +209,11 @@ async def cli_main(args: argparse.Namespace):
                 await pioneer.media_control(arg)
             except Exception as exc:  # pylint: disable=broad-except
                 print(f'ERROR: Invalid media_control action "{arg}": {exc}')
+        elif cmd == "select_menu_item":
+            try:
+                await pioneer.select_menu_item(arg)
+            except Exception as exc:  # pylint: disable=broad-except
+                print(f'ERROR: Invalid menu item "{arg}": {exc}')
         elif cmd == "select_source":
             source = arg if arg else ""
             await pioneer.select_source(source, zone=zone)

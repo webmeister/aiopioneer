@@ -139,6 +139,9 @@ RESPONSE_DATA = [
     ["AST", InformationParsers.audio_information, Zones.ALL],
     ["VST", InformationParsers.video_information, Zones.ALL],
     ["FL", InformationParsers.device_display_information, Zones.ALL],
+    ["GCP", InformationParsers.device_screen_name, Zones.ALL],
+    ["GDP", InformationParsers.device_screen_indexes, Zones.ALL],
+    ["GEP", InformationParsers.device_screen_line, Zones.ALL],
     ##
     ["VTB", VideoParsers.video_converter, Zones.Z1],
     ["VTC", VideoParsers.video_resolution, Zones.Z1],
