@@ -204,6 +204,11 @@ async def cli_main(args: argparse.Namespace):
                 await pioneer.set_volume_level(volume_level, zone=zone)
             except Exception as exc:  # pylint: disable=broad-except
                 print(f'ERROR: Invalid volume level "{arg}": {exc}')
+        elif cmd == "media_control":
+            try:
+                await pioneer.media_control(arg)
+            except Exception as exc:  # pylint: disable=broad-except
+                print(f'ERROR: Invalid media_control action "{arg}": {exc}')
         elif cmd == "select_source":
             source = arg if arg else ""
             await pioneer.select_source(source, zone=zone)
