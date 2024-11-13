@@ -212,6 +212,13 @@ MEDIA_CONTROL_COMMANDS = {
         "next": "operation_mhl_next",
         "previous": "operation_mhl_previous",
     },
+    "generic": {
+        "play": "operation_media_play",
+        "pause": "operation_media_pause",
+        "stop": "operation_media_stop",
+        "next": "operation_media_next",
+        "previous": "operation_media_previous",
+    },
 }
 
 TONE_MODES = {

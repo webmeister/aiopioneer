@@ -42,6 +42,7 @@ from .param import (
     PARAM_QUERY_SOURCES,
     PARAM_ALL_LISTENING_MODES,
     PARAM_AVAILABLE_LISTENING_MODES,
+    PARAM_USE_GENERIC_MEDIA_COMMANDS,
 )
 from .commands import PIONEER_COMMANDS
 from .exceptions import (
@@ -219,6 +220,8 @@ class PioneerAVR:
             ## defer PARAM_TUNER_AM_FREQ_STEP to _user_params if specified
             del self._system_params[PARAM_TUNER_AM_FREQ_STEP]
         merge(self._params, self._system_params)
+        if self._params.get(PARAM_USE_GENERIC_MEDIA_COMMANDS):
+            MEDIA_CONTROL_COMMANDS["NETWORK"] = MEDIA_CONTROL_COMMANDS["generic"]
 
     def set_user_params(self, params: dict[str, Any] = None) -> None:
         """Set user parameters and update current parameters."""

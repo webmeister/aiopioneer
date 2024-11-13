@@ -27,6 +27,7 @@ PARAM_ZONE_SOURCES = {
     Zones.Z3: PARAM_ZONE_3_SOURCES,
     Zones.HDZ: PARAM_HDZONE_SOURCES,
 }
+PARAM_USE_GENERIC_MEDIA_COMMANDS = "use_generic_media_commands"
 
 ## All possible valid speaker system settings for HDZone volume functions to be available
 PARAM_HDZONE_VOLUME_REQUIREMENTS = "hdzone_volume_requirements"
@@ -213,6 +214,7 @@ PARAM_DEFAULTS = {
     PARAM_VIDEO_RESOLUTION_MODES: ["0", "1", "3", "4", "5", "6", "7", "8", "9"],
     PARAM_MHL_SOURCE: None,
     PARAM_TUNER_AM_FREQ_STEP: None,
+    PARAM_USE_GENERIC_MEDIA_COMMANDS: False,
 }
 
 PARAMS_ALL = PARAM_DEFAULTS.keys()
@@ -367,6 +369,7 @@ PARAM_MODEL_DEFAULTS = OrderedDict(
             {
                 PARAM_VOLUME_STEP_ONLY: True,
                 PARAM_DISABLE_AUTO_QUERY: True,
+                PARAM_USE_GENERIC_MEDIA_COMMANDS: True,
             },
         ),
         (
