@@ -366,6 +366,7 @@ PARAM_MODEL_DEFAULTS = OrderedDict(
             r"^VSX-S510",
             {
                 PARAM_VOLUME_STEP_ONLY: True,
+                PARAM_DISABLE_AUTO_QUERY: True,
             },
         ),
         (
