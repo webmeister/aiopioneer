@@ -153,6 +153,7 @@ MEDIA_CONTROL_SOURCES = {
     "26": "NETWORK",
     "38": "NETWORK",
     "44": "NETWORK",
+    "45": "NETWORK",
     "02": "TUNER",
     "13": "ADAPTERPORT",
     "41": "NETWORK",
