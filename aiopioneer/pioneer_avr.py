@@ -420,6 +420,12 @@ class PioneerAVR:
         await cancel_task(self._reconnect_task, "reconnect")
         self._reconnect_task = None
 
+    async def trigger_reconnect(self) -> None:
+        """Trigger reconnect attempt immediately."""
+        self._reconnect = True
+        await self._reconnect_cancel()
+        await self._reconnect_schedule()
+
     async def _connection_listener(self) -> None:
         """AVR connection listener. Parse responses and update state."""
         if self._params[PARAM_DEBUG_LISTENER]:

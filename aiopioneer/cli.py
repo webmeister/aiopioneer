@@ -101,6 +101,8 @@ async def cli_main(args: argparse.Namespace):
             break
         elif cmd == "log_level":
             set_log_level(arg)
+        elif cmd == "reconnect":
+            await pioneer.trigger_reconnect()
         elif cmd == "update":
             await pioneer.update()
         elif cmd == "update_full":
